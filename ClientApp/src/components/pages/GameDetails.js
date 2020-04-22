@@ -1,32 +1,39 @@
-﻿import React, { Component } from 'react';
-
+﻿import React, { Component } from "react";
 
 export default class GameDetails extends Component {
+  static displayName = GameDetails.name;
 
-    static displayName = GameDetails.name;
+  constructor(props) {
+    super(props);
 
-    constructor(props) {
+    this.state = {
+      game: null,
+    };
+  }
 
-        super(props);
+  componentDidMount() {
+    const gameId = this.props.match.params.id;
 
-        this.state = {
-            game: {
-                title: "Tetris",
-                description: "Lorem ipsum dolor",
-                imageUrl: "http://via.placeholder.com/640x480.png?text=Tetris"
-            }
-        }
-    }
+    fetch(`https://localhost:5001/game/${gameId}`)
+      .then((x) => x.json())
+      .then((game) => {
+        this.setState({
+          game,
+        });
+      });
+  }
 
-    render() {
-        return (
-            <div>
-                <h1>{this.state.game.title}</h1>
-                <p>
-                    {this.state.game.description}
-                </p>
-                <img src={this.state.game.imageUrl} alt="Tetris" />
-            </div>
-        );
-    }
+  render() {
+    let contents = !this.state.game ? (
+      <div>loading...</div>
+    ) : (
+      <div>
+        <h1>{this.state.game.title}</h1>
+        <p>{this.state.game.description}</p>
+        <img src={this.state.game.imageUrl} alt="Tetris" />
+      </div>
+    );
+
+    return <div>{contents}</div>;
+  }
 }

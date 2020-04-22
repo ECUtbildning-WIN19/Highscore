@@ -4,14 +4,16 @@ using Highscore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Highscore.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200422124059_AddGame")]
+    partial class AddGame
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -103,22 +105,6 @@ namespace Highscore.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Game");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Lorem ipsum dolor",
-                            ImageUrl = "http://via.placeholder.com/640x480.png?text=Tetris",
-                            Title = "Tetris"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Lorem ipsum dolor",
-                            ImageUrl = "http://via.placeholder.com/640x480.png?text=Donkey+Kong",
-                            Title = "Donkey Kong"
-                        });
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.DeviceFlowCodes", b =>
