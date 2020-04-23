@@ -1,4 +1,5 @@
 ﻿import React, { Component } from "react";
+import GameHighscores, { message } from "../GameHighscores";
 
 export default class GameDetails extends Component {
   static displayName = GameDetails.name;
@@ -24,13 +25,17 @@ export default class GameDetails extends Component {
   }
 
   render() {
-    let contents = !this.state.game ? (
+    const game = this.state.game;
+
+    let contents = !game ? (
       <div>loading...</div>
     ) : (
       <div>
-        <h1>{this.state.game.title}</h1>
-        <p>{this.state.game.description}</p>
-        <img src={this.state.game.imageUrl} alt="Tetris" />
+        <h1>{game.title}</h1>
+        <p>{game.description}</p>
+        <img src={game.imageUrl} alt="Tetris" />
+        <hr />
+        <GameHighscores scores={game.scores} />
       </div>
     );
 

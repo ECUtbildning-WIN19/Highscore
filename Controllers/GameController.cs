@@ -1,6 +1,8 @@
 ﻿using Highscore.Data;
 using Highscore.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.IO.Compression;
 using System.Linq;
 
 namespace Highscore.Controllers
@@ -19,7 +21,9 @@ namespace Highscore.Controllers
         [HttpGet("{id}")]
         public ActionResult<Game> GetGameById(int id)
         {
-            var game = context.Game.FirstOrDefault(x => x.Id == id);
+            var game = context.Game
+                .Include(x => x.Scores)
+                .FirstOrDefault(x => x.Id == id);
 
             if (game == null)
             {

@@ -11,6 +11,11 @@ using Highscore.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
+using GraphQL;
+using Highscore.GraphQL;
+using GraphQL.Server;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace Highscore
 {
@@ -39,7 +44,24 @@ namespace Highscore
             services.AddAuthentication()
                 .AddIdentityServerJwt();
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(config =>
+            {
+                config.ReturnHttpNotAcceptable = true;
+            })
+            .AddNewtonsoftJson(setupAction =>
+               setupAction.SerializerSettings.ReferenceLoopHandling =
+                  ReferenceLoopHandling.Ignore);
+
+            services.AddScoped<IDependencyResolver>(s =>
+                new FuncDependencyResolver(s.GetRequiredService));
+
+            services.AddScoped<HighscoreSchema>();
+
+            services.AddGraphQL()
+               // Scannar assembly efter graph-typer, såsom GameType och
+               // registrerar dom automatiskt i kontainern.
+               .AddGraphTypes(ServiceLifetime.Scoped);
+
             services.AddRazorPages();
 
             // In production, the React files will be served from this directory
@@ -48,12 +70,29 @@ namespace Highscore
                 configuration.RootPath = "ClientApp/build";
             });
 
-            services.AddCors(options =>
+            services.AddCors(options => options.AddPolicy("AllowAllOrigins", builder =>
+               builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()));
+
+            //services.AddCors(options =>
+            //{
+            //    options.AddDefaultPolicy(builder =>
+            //    {
+            //        builder.WithOrigins("http://localhost:3000");
+            //    });
+            //});
+
+            // When using Kestrel
+            services.Configure<KestrelServerOptions>(options =>
             {
-                options.AddDefaultPolicy(builder =>
-                {
-                    builder.WithOrigins("http://localhost:3000");
-                });
+                options.AllowSynchronousIO = true;
+            });
+
+            // When using IIS
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
             });
         }
 
@@ -76,9 +115,11 @@ namespace Highscore
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
+            app.UseGraphQL<HighscoreSchema>();
+
             app.UseRouting();
 
-            app.UseCors();
+            app.UseCors("AllowAllOrigins");
 
             app.UseAuthentication();
             app.UseIdentityServer();
@@ -97,8 +138,8 @@ namespace Highscore
 
                 if (env.IsDevelopment())
                 {
-                    //spa.UseReactDevelopmentServer(npmScript: "start");
-                    spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
+                    spa.UseReactDevelopmentServer(npmScript: "start");
+                    //spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
                 }
             });
         }

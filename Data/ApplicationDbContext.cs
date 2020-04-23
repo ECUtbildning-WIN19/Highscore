@@ -30,6 +30,14 @@ namespace Highscore.Data
             };
 
             games.ForEach(x => builder.Entity<Game>().HasData(x));
+
+            var scores = new List<Score>
+            {
+                new Score(1, 289983, new DateTime(2019,1,1), "John", 1),
+                new Score(2, 354632, new DateTime(2020,2,10), "Jane", 1)
+            };
+
+            scores.ForEach(x => builder.Entity<Score>().HasData(x));
         }
     }
 }

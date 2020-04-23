@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Highscore.Models.Entities
 {
@@ -19,5 +21,7 @@ namespace Highscore.Models.Entities
         public string Description { get; protected set; }
 
         public Uri ImageUrl { get; protected set; }
+
+        public IEnumerable<Score> Scores { get; protected set; }
     }
 }

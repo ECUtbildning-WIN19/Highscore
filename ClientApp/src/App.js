@@ -1,5 +1,6 @@
 ﻿import React, { Component } from "react";
 import { Route } from "react-router";
+import Games from "./components/pages/Games";
 import GameDetails from "./components/pages/GameDetails";
 import PlayerDetails from "./components/pages/PlayerDetails";
 
@@ -9,7 +10,8 @@ export default class App extends Component {
   render() {
     return (
       <div>
-        <Route path="/game/:id" component={GameDetails} />
+        <Route path="/games" component={Games} />
+        <Route path="/games/:id" component={GameDetails} />
         <Route path="/player/:id" component={PlayerDetails} />
       </div>
     );
